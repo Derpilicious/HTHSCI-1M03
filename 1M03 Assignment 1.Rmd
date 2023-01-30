@@ -1,0 +1,137 @@
+---
+title: '1M03 Assignment #1'
+author: "Roy Luo 400474680, Kenny Zhao"
+date: "2023-01-30"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
+set.seed(34)
+library(dplyr)
+```
+
+## Question 1
+```{r}
+N <- 1000
+m1 <- matrix(sample(1:10, N, replace=TRUE), ncol=5)
+```
+**a.**
+```{r}
+df1 <- as.data.frame(m1)
+```
+**b.**
+```{r}
+names(df1)
+```
+**c.**
+```{r}
+names(df1)<-paste0("col_", 1:ncol(df1))
+names(df1)
+```
+**d.**
+```{r}
+lst1 <- list(m1,df1)
+glimpse(lst1)
+```
+**e.**
+```{r}
+v1_ <- lst1[[1]][,3]
+v2_ <- lst1[[2]][,3]
+```
+**f.**
+```{r}
+identical(v1_,v2_)
+```
+## Question 2
+```{r}
+N <- 50
+x1 <- as.factor(sample(letters[7:12], N, replace=TRUE))
+x2 <- as.factor(sample(7:12, N, replace = TRUE))
+```
+**a.**
+```{r}
+class(x1)
+```
+**b.**
+```{r}
+levels(x1)
+```
+**c.**
+```{r}
+table(x1)[which.min(x1)]
+```
+**d.**
+```{r}
+table(x1)[which.min(x1)]/length(x1)
+```
+**e.**
+```{r}
+as.numeric(levels(x2)[x2])
+x2
+```
+**f.**
+```{r}
+typeof(x2)
+typeof(x2)
+```
+## Question 3
+**a.**
+```{r}
+library(dslabs)
+```
+**b.**
+```{r}
+glimpse(outlier_example)
+```
+**c.**
+```{r}
+m1<- matrix(outlier_example,nrow=50,byrow=TRUE)
+```
+**d.**
+```{r}
+ncol(m1)
+```
+**e.**
+```{r}
+m1[which.max(m1)]
+which.max(m1)
+```
+## Question 4
+**a.**
+```{r}
+glimpse(greenhouse_gases)
+```
+**b.**
+```{r}
+col_f <- factor(greenhouse_gases[,2])
+```
+**c.**
+```{r}
+glimpse(greenhouse_gases[,-2])
+```
+**d.**
+```{r}
+i_ <- sample((nrow(greenhouse_gases)),10)
+```
+**e.**
+```{r}
+greenhouse_gases$concentration[i_] <- NA
+sum(is.na(greenhouse_gases["concentration"]))
+```
+**f.**
+```{r}
+tf_ <- greenhouse_gases["concentration"]>1000
+table(tf_, levels=col_f)
+```
+## Bonus Question
+```{r}
+vn_ <- c(-1.1,-0.2, 0, 0.19, 0.89, 1.2)
+vc_ <- c("a", "g", "q")
+if (vn_ > 0.5 || all(letters %in% vc_)) {
+  cat("You fixed it")
+}
+vn_ > 0.5
+all(letters %in% vc_)
+```
+The following if statement does not work because both the first half and second half of the "or conditional" (represented by ||) is false. The first half of the "or conditional" is asking if every entry in the numeric vector "vn_" is greater than 0.5. The second half of the "or conditional" is asking whether or not every letter of the alphabet is in the character vector "vc_". As neither of these are true, then therefore the "or conditional" will return false and the if statement will not execute. Thus, the if statement will not work.
