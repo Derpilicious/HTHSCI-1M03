@@ -10,7 +10,6 @@ knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
 set.seed(34)
 library(dplyr)
 ```
-
 ## Question 1
 ```{r}
 N <- 1000
@@ -43,6 +42,7 @@ v2_ <- lst1[[2]][,3]
 ```{r}
 identical(v1_,v2_)
 ```
+\newpage
 ## Question 2
 ```{r}
 N <- 50
@@ -73,8 +73,9 @@ x2
 **f.**
 ```{r}
 typeof(x2)
-typeof(x2)
+class(x2)
 ```
+\newpage
 ## Question 3
 **a.**
 ```{r}
@@ -97,6 +98,7 @@ ncol(m1)
 m1[which.max(m1)]
 which.max(m1)
 ```
+\newpage
 ## Question 4
 **a.**
 ```{r}
@@ -124,14 +126,28 @@ sum(is.na(greenhouse_gases["concentration"]))
 tf_ <- greenhouse_gases["concentration"]>1000
 table(tf_, levels=col_f)
 ```
+\newpage
 ## Bonus Question
+
+The following if statement does not work because both the first half and second half of the "OR" logical operator (represented by ||) is false. Since it is the double sign version of the OR logical operator, this means it evaluates only the first element of a vector as opposed to the single sign version of the OR operator that evaluates vectors element-wise. 
+
 ```{r}
-vn_ <- c(-1.1,-0.2, 0, 0.19, 0.89, 1.2)
+vn_ <- c(-1.1, -0.2, 0, 0.19, 0.89, 1.2)
 vc_ <- c("a", "g", "q")
-if (vn_ > 0.5 || all(letters %in% vc_)) {
-  cat("You fixed it")
+if(vn_>0.5 || all(letters%in%vc_)) {
+  cat ("You fixed it !")
 }
-vn_ > 0.5
-all(letters %in% vc_)
 ```
-The following if statement does not work because both the first half and second half of the "or conditional" (represented by ||) is false. The first half of the "or conditional" is asking if every entry in the numeric vector "vn_" is greater than 0.5. The second half of the "or conditional" is asking whether or not every letter of the alphabet is in the character vector "vc_". As neither of these are true, then therefore the "or conditional" will return false and the if statement will not execute. Thus, the if statement will not work.
+The first half of the if statement asks if vn_ > 0.5, so it will evaluate the first index of the numeric vector vn_, and return TRUE if it is greater than 0.5 and FALSE otherwise. As -1.1 is clearly not greater than 0.5, then vn_ > 0.5 returns FALSE. 
+```{r}
+isTRUE(vn_>0.5)
+```
+The second half of the if statement is asking whether or not every letter of the alphabet is in the character vector vc_. Note that the all() function only returns TRUE if all of it's arguments are TRUE. Obviously, not every letter in the alphabet is in the vector vc_ so it will return FALSE.
+```{r}
+isTRUE(letters%in%vc_)
+```
+Thus, the all() function will return FALSE as well. 
+```{r}
+isTRUE(all(letters%in%vc_))
+```
+Therefore, as neither of these two halves of the if statement are true, then the OR conditional will return false and the if statement will not execute. Thus, the if statement will not work.
