@@ -7,7 +7,6 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 set.seed(34)
-library(dplyr)
 ```
 ## Question 1
 ```{r}
@@ -58,11 +57,11 @@ levels(x1)
 ```
 **c.**
 ```{r}
-table(x1)[which.min(x1)]
+names(which.min(table(x1)))
 ```
 **d.**
 ```{r}
-table(x1)[which.min(x1)] / length(x1)
+table(x1)[names(which.min(table(x1)))] / length(x1)
 ```
 **e.**
 ```{r}
@@ -108,7 +107,7 @@ col_f <- factor(greenhouse_gases[, 2])
 ```
 **c.**
 ```{r}
-glimpse(greenhouse_gases[, -2])
+str(greenhouse_gases[, -2])
 ```
 **d.**
 ```{r}
@@ -148,3 +147,6 @@ Thus, the all() function will return FALSE as well.
 isTRUE(all(letters %in% vc_))
 ```
 Therefore, as neither of these two halves of the if statement are true, then the OR conditional will return false and the if statement will not execute. Thus, the if statement will not work.
+```{r}
+isTRUE(vn_ > 0.5 || all(letters %in% vc_))
+```
