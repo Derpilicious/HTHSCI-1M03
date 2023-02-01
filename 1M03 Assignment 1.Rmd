@@ -4,16 +4,15 @@ author: "Roy Luo 400474680, Kenny Zhao"
 date: "2023-01-30"
 output: pdf_document
 ---
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, eval=TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE)
 set.seed(34)
 library(dplyr)
 ```
 ## Question 1
 ```{r}
 N <- 1000
-m1 <- matrix(sample(1:10, N, replace=TRUE), ncol=5)
+m1 <- matrix(sample(1:10, N, replace = TRUE), ncol = 5)
 ```
 **a.**
 ```{r}
@@ -25,28 +24,28 @@ names(df1)
 ```
 **c.**
 ```{r}
-names(df1)<-paste0("col_", 1:ncol(df1))
+names(df1) <- paste0("col_", 1:ncol(df1))
 names(df1)
 ```
 **d.**
 ```{r}
-lst1 <- list(m1,df1)
-glimpse(lst1)
+lst1 <- list(m1, df1)
+str(lst1)
 ```
 **e.**
 ```{r}
-v1_ <- lst1[[1]][,3]
-v2_ <- lst1[[2]][,3]
+v1_ <- lst1[[1]][, 3]
+v2_ <- lst1[[2]][, 3]
 ```
 **f.**
 ```{r}
-identical(v1_,v2_)
+identical(v1_, v2_)
 ```
 \newpage
 ## Question 2
 ```{r}
 N <- 50
-x1 <- as.factor(sample(letters[7:12], N, replace=TRUE))
+x1 <- as.factor(sample(letters[7:12], N, replace = TRUE))
 x2 <- as.factor(sample(7:12, N, replace = TRUE))
 ```
 **a.**
@@ -63,16 +62,15 @@ table(x1)[which.min(x1)]
 ```
 **d.**
 ```{r}
-table(x1)[which.min(x1)]/length(x1)
+table(x1)[which.min(x1)] / length(x1)
 ```
 **e.**
 ```{r}
-as.numeric(levels(x2)[x2])
-x2
+x2 <- as.numeric(x2)
+str(x2)
 ```
 **f.**
 ```{r}
-typeof(x2)
 class(x2)
 ```
 \newpage
@@ -83,11 +81,11 @@ library(dslabs)
 ```
 **b.**
 ```{r}
-glimpse(outlier_example)
+str(outlier_example)
 ```
 **c.**
 ```{r}
-m1<- matrix(outlier_example,nrow=50,byrow=TRUE)
+m1 <- matrix(outlier_example, nrow = 50, byrow = TRUE)
 ```
 **d.**
 ```{r}
@@ -95,26 +93,26 @@ ncol(m1)
 ```
 **e.**
 ```{r}
-m1[which.max(m1)]
+max(m1)
 which.max(m1)
 ```
 \newpage
 ## Question 4
 **a.**
 ```{r}
-glimpse(greenhouse_gases)
+str(greenhouse_gases)
 ```
 **b.**
 ```{r}
-col_f <- factor(greenhouse_gases[,2])
+col_f <- factor(greenhouse_gases[, 2])
 ```
 **c.**
 ```{r}
-glimpse(greenhouse_gases[,-2])
+glimpse(greenhouse_gases[, -2])
 ```
 **d.**
 ```{r}
-i_ <- sample((nrow(greenhouse_gases)),10)
+i_ <- sample((nrow(greenhouse_gases)), 10)
 ```
 **e.**
 ```{r}
@@ -123,31 +121,30 @@ sum(is.na(greenhouse_gases["concentration"]))
 ```
 **f.**
 ```{r}
-tf_ <- greenhouse_gases["concentration"]>1000
-table(tf_, levels=col_f)
+tf_ <- greenhouse_gases["concentration"] > 1000
+table(tf_, levels = col_f)
 ```
 \newpage
 ## Bonus Question
 
 The following if statement does not work because both the first half and second half of the "OR" logical operator (represented by ||) is false. Since it is the double sign version of the OR logical operator, this means it evaluates only the first element of a vector as opposed to the single sign version of the OR operator that evaluates vectors element-wise. 
-
 ```{r}
 vn_ <- c(-1.1, -0.2, 0, 0.19, 0.89, 1.2)
 vc_ <- c("a", "g", "q")
-if(vn_>0.5 || all(letters%in%vc_)) {
-  cat ("You fixed it !")
+if (vn_ > 0.5 || all(letters %in% vc_)) {
+  cat("You fixed it !")
 }
 ```
 The first half of the if statement asks if vn_ > 0.5, so it will evaluate the first index of the numeric vector vn_, and return TRUE if it is greater than 0.5 and FALSE otherwise. As -1.1 is clearly not greater than 0.5, then vn_ > 0.5 returns FALSE. 
 ```{r}
-isTRUE(vn_>0.5)
+isTRUE(vn_ > 0.5)
 ```
 The second half of the if statement is asking whether or not every letter of the alphabet is in the character vector vc_. Note that the all() function only returns TRUE if all of it's arguments are TRUE. Obviously, not every letter in the alphabet is in the vector vc_ so it will return FALSE.
 ```{r}
-isTRUE(letters%in%vc_)
+isTRUE(letters %in% vc_)
 ```
 Thus, the all() function will return FALSE as well. 
 ```{r}
-isTRUE(all(letters%in%vc_))
+isTRUE(all(letters %in% vc_))
 ```
 Therefore, as neither of these two halves of the if statement are true, then the OR conditional will return false and the if statement will not execute. Thus, the if statement will not work.
