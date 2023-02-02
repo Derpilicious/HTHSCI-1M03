@@ -1,6 +1,6 @@
 ---
 title: '1M03 Assignment #1'
-author: "Roy Luo 400474680, Kenny Zhao"
+author: "Roy Luo 400474680, Kenny Zhao ADD YOUR FUCKING STUDENT NUMBER OMG YOU DUMB SHIT YOURE ACTUALLY INFECTED"
 date: "2023-01-30"
 output: pdf_document
 ---
