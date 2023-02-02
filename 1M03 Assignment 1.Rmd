@@ -1,6 +1,6 @@
 ---
 title: '1M03 Assignment #1'
-author: "Roy Luo 400474680, Kenny Zhao ADD YOUR FUCKING STUDENT NUMBER OMG YOU DUMB SHIT YOURE ACTUALLY INFECTED"
+author: "Roy Luo 400474680, Kenny Zhao ADD YOUR FUCKING STUDENT NUMBER OMG YOU DUMBASS YOURE ACTUALLY INFECTED BY CORDYCEPS"
 date: "2023-01-30"
 output: pdf_document
 ---
@@ -65,7 +65,7 @@ x2 <- as.factor(sample(7:12, N, replace = TRUE))
 ```{r}
 class(x1)
 ```
-Retrieves the data structure type using the **class()** function. It indicates x1 is a factor.
+Retrieves the data structure type using the **class()** function. It indicates **x1** is a factor.
 
 **b.**
 ```{r}
@@ -78,7 +78,7 @@ Uses the **levels()** function to see the different levels of a factor and the *
 ```{r}
 names(which.min(table(x1)))
 ```
-Uses the **table()** function to see the count of how many times each level appears in **x1**. Then uses which.min() to find the index of the level that appears the least amount of times. Finally uses names() to display what the actual level is that has appeared the least amount of times in **x1**.
+Uses the **table()** function to see the count of how many times each level appears in **x1**. Then uses the **which.min()** function to find the index of the level that appears the least amount of times. Finally uses the **names()** function to display the actual name of the level that has appeared the least amount of times in **x1**.
 
 **d.**
 ```{r}
@@ -91,7 +91,7 @@ Same as above, but now divides it by the length of **x1** to obtain the percenta
 x2 <- as.numeric(x2)
 str(x2)
 ```
-Assigns **x2** to the numeric version of itself using the **as.numeric()** function. Displays the result using str().
+Assigns **x2** to the numeric version of itself using the **as.numeric()** function. Displays the result using the **str()** function.
 
 **f.**
 ```{r}
