@@ -13,120 +13,172 @@ set.seed(34)
 N <- 1000
 m1 <- matrix(sample(1:10, N, replace = TRUE), ncol = 5)
 ```
+
 **a.**
 ```{r}
 df1 <- as.data.frame(m1)
 ```
+Uses the **as.data.frame()** function to turn **m1** into a dataframe then assigns it to a variable **df1**.
+
 **b.**
 ```{r}
 names(df1)
 ```
+Uses the **names()** function to print out the column names of **df1**.
+
 **c.**
 ```{r}
 names(df1) <- paste0("col_", 1:ncol(df1))
 names(df1)
 ```
+Uses the **paste0()** function to concantenate **col_** and the column number and assign it as the names of the columns of **df1**.
+
 **d.**
 ```{r}
 lst1 <- list(m1, df1)
 str(lst1)
 ```
+Assigns a variable **lst1** to contain both **m1** and **df1** using the **list()** function, then displays it using the **str()** function.
+
 **e.**
 ```{r}
 v1_ <- lst1[[1]][, 3]
 v2_ <- lst1[[2]][, 3]
 ```
+Uses double brackets for the first index bracket to retrieve the original data structure (as opposed to single brackets that would return it as a list). Then, the second index bracket retrieves the whole third column by leaving the row index blank to retrieve all rows and only putting a 3 in the column entry to indicate the column number.
+
 **f.**
 ```{r}
 identical(v1_, v2_)
 ```
+Uses the **identical()** function to verify that **v1_** and **v2_** are equal. It returns **TRUE**, indicating they are indeed equal to one another.
 \newpage
+
 ## Question 2
 ```{r}
 N <- 50
 x1 <- as.factor(sample(letters[7:12], N, replace = TRUE))
 x2 <- as.factor(sample(7:12, N, replace = TRUE))
 ```
+
 **a.**
 ```{r}
 class(x1)
 ```
+Retrieves the data structure type using the **class()** function. It indicates x1 is a factor.
+
 **b.**
 ```{r}
 levels(x1)
+length(x1)
 ```
+Uses the **levels()** function to see the different levels of a factor and the **length()** function to see it's length. It indicates there are 6 levels in **x1** (g, h, i, j, k and l) and contains 50 entries.
+
 **c.**
 ```{r}
 names(which.min(table(x1)))
 ```
+Uses the **table()** function to see the count of how many times each level appears in **x1**. Then uses which.min() to find the index of the level that appears the least amount of times. Finally uses names() to display what the actual level is that has appeared the least amount of times in **x1**.
+
 **d.**
 ```{r}
 table(x1)[names(which.min(table(x1)))] / length(x1)
 ```
+Same as above, but now divides it by the length of **x1** to obtain the percentage (6%).
+
 **e.**
 ```{r}
 x2 <- as.numeric(x2)
 str(x2)
 ```
+Assigns **x2** to the numeric version of itself using the **as.numeric()** function. Displays the result using str().
+
 **f.**
 ```{r}
 class(x2)
 ```
+Uses the **class()** function to verify **x2** is indeed numeric. Note that part **e** also verified using the **str()** function that **x2** was numeric, indicated by the **num** preceding the entries.
+
 \newpage
+
 ## Question 3
+
 **a.**
 ```{r}
 library(dslabs)
 ```
+Loads the **dslabs** library using the **library()** function.
+
 **b.**
 ```{r}
 str(outlier_example)
 ```
+Uses the **str()** function to display the **outlier_examples** object to see there is 500 entries.
+
 **c.**
 ```{r}
 m1 <- matrix(outlier_example, nrow = 50, byrow = TRUE)
 ```
+Uses the **matrix()** function to assign a variable **m1** the **outlier_example** object. Note that the **nrow** argument is used to indicate the number of rows (50) and the boolean **byrow** argument is used to indicate whether or not to fill it by row or by column (by default it is by column, so **byrow = TRUE** now changes it so that it is filled by row).
+
 **d.**
 ```{r}
 ncol(m1)
 ```
+Uses the **ncol()** function to print out how many columns there are. We know this is true as 500 entries divieded by 50 rows means each row must have exactly 10 entries, thus meaning there must be 10 columns.
+
 **e.**
 ```{r}
 max(m1)
-which.max(m1)
+which(m1 == max(m1))
 ```
+Uses the **max()** function to find the max value in **m1** (180). Uses the **which()** function to find all the indices in **m1** where the value at that index is equal to the maximum value in **m1**. There is only one (422), indicating that 180 only appears once, at index 422.
 \newpage
+
 ## Question 4
+
 **a.**
 ```{r}
 str(greenhouse_gases)
 ```
+As the **dslabs** library is already loaded from question 3a, there is no need to load it again using the **library()** function. Displays the **greenhouse_gases** data using the **str()** function.
+
 **b.**
 ```{r}
 col_f <- factor(greenhouse_gases[, 2])
 ```
+Uses the **factor()** function on the second column of **greenhouse_gases** (the character column) by indexing **greenhouse_gases** and leaving the row entry blank to retrieve all rows as well as a 2 in the column entry to indicate the column number that is to be retrieved. Assigns the factor to a variable **col_f**.
+
 **c.**
 ```{r}
 str(greenhouse_gases[, -2])
 ```
+Uses the **str()** function to display **greenhouse_gases** without the second column by indexing. Leaving the row entry blank to retrieve all rows and adding a minus sign (-) in front of the 2 in the column entry which drops the second column.
+
 **d.**
 ```{r}
 i_ <- sample((nrow(greenhouse_gases)), 10)
 ```
+Assigns to a variable **i_** a random sample of row indices of **greenhouse_gases**, obtained by using the **sample()** function on the number of rows of **greenhouse_gases**. Note that the second argument of the **sample()** function indicates how many samples we want (10 in this case).
+
 **e.**
 ```{r}
 greenhouse_gases$concentration[i_] <- NA
-sum(is.na(greenhouse_gases["concentration"]))
+sum(is.na(greenhouse_gases$concentration))
 ```
+Assigns NA to the 10 random values of the **concentration** column of **greenhouse_gases** (accessed by the **$** operator). These 10 random rows are indexed by using the **i_** variable from part d. Verifies that 10 entries in the **concentration** column are given the NA assignment by using the **is.na()** function on the **concentration** column (accessed through indexing **greenhouse_gases**). Then uses the **sum()** function to find the sum of how many values are **TRUE**. Note that since **TRUE** has an implicit value of 1 and **FALSE** has an implicit value of 0, then sum() will essentially return the count of how many NA values there are in the **concentration** column. We see there are 10 NA values, and thus that means setting the row indices contained by **i_** of the **concentration** column to NA have been successful.
+
 **f.**
 ```{r}
-tf_ <- greenhouse_gases["concentration"] > 1000
+tf_ <- greenhouse_gases$concentration > 1000
 table(tf_, levels = col_f)
 ```
+Assigns to a variable **tf_** the logical vector of the **concentration** column of **greenhouse_gases** where the entry is greater than 1000. Uses the **table()** function to count the frequency of **TRUE** and **FALSE** in the logical vector. Note that the **levels = col_f** argument applies the **col_f** factor levels on the frequency of occurrences. We see there are 3 occurrences of when the concentration is over 1000ppm, all three of which occur when the gas is CH4 (methane).
 \newpage
+
 ## Bonus Question
 
-The following if statement does not work because both the first half and second half of the "OR" logical operator (represented by ||) is false. Since it is the double sign version of the OR logical operator, this means it evaluates only the first element of a vector as opposed to the single sign version of the OR operator that evaluates vectors element-wise. 
+The following if statement does not work because both the first half and second half of the **OR** logical operator (represented by **||**) is false. Since it is the double sign version of the OR logical operator, this means it evaluates only the first element of a vector as opposed to the single sign version of the OR operator that evaluates vectors element-wise. 
 ```{r}
 vn_ <- c(-1.1, -0.2, 0, 0.19, 0.89, 1.2)
 vc_ <- c("a", "g", "q")
@@ -134,19 +186,19 @@ if (vn_ > 0.5 || all(letters %in% vc_)) {
   cat("You fixed it !")
 }
 ```
-The first half of the if statement asks if vn_ > 0.5, so it will evaluate the first index of the numeric vector vn_, and return TRUE if it is greater than 0.5 and FALSE otherwise. As -1.1 is clearly not greater than 0.5, then vn_ > 0.5 returns FALSE. 
+The first half of the if statement asks if **vn_ > 0.5**, so it will evaluate the first index of the numeric vector **vn_**, and return **TRUE** if it is greater than 0.5 and **FALSE** otherwise. As -1.1 is clearly not greater than 0.5, then **vn_ > 0.5** returns **FALSE**. 
 ```{r}
 isTRUE(vn_ > 0.5)
 ```
-The second half of the if statement is asking whether or not every letter of the alphabet is in the character vector vc_. Note that the all() function only returns TRUE if all of it's arguments are TRUE. Obviously, not every letter in the alphabet is in the vector vc_ so it will return FALSE.
+The second half of the if statement is asking whether or not every letter of the alphabet is in the character vector **vc_**. Note that the **all()** function only returns **TRUE** if all of it's arguments are **TRUE**. Obviously, not every letter in the alphabet is in the vector **vc_** so it will return **FALSE**.
 ```{r}
 isTRUE(letters %in% vc_)
 ```
-Thus, the all() function will return FALSE as well. 
+Thus, the **all()** function will return **FALSE** as well. 
 ```{r}
 isTRUE(all(letters %in% vc_))
 ```
-Therefore, as neither of these two halves of the if statement are true, then the OR conditional will return false and the if statement will not execute. Thus, the if statement will not work.
+Therefore, as neither of these two halves of the if statement are true, then the OR conditional will return **FALSE** and the if statement will not execute. Thus, the if statement will not work.
 ```{r}
 isTRUE(vn_ > 0.5 || all(letters %in% vc_))
 ```
