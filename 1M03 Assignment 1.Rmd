@@ -59,6 +59,7 @@ Uses the **identical()** function to verify that **v1_** and **v2_** are equal. 
 N <- 50
 x1 <- as.factor(sample(letters[7:12], N, replace = TRUE))
 x2 <- as.factor(sample(7:12, N, replace = TRUE))
+x2
 ```
 
 **a.**
@@ -105,9 +106,9 @@ Uses the **class()** function to verify **x2** is indeed numeric. Note that part
 
 **a.**
 ```{r}
-library(dslabs)
+data("outlier_example", package = "dslabs")
 ```
-Loads the **dslabs** library using the **library()** function.
+Loads the **outlier_example** dataset from the **dslabs** package using the **data()** function.
 
 **b.**
 ```{r}
@@ -139,9 +140,10 @@ Uses the **max()** function to find the max value in **m1** (180). Uses the **wh
 
 **a.**
 ```{r}
+data("greenhouse_gases", package="dslabs")
 str(greenhouse_gases)
 ```
-As the **dslabs** library is already loaded from question 3a, there is no need to load it again using the **library()** function. Displays the **greenhouse_gases** data using the **str()** function.
+Loads the **greenhouse_gases** dataset from the **dslabs** package using the **data()** function. Displays the **greenhouse_gases** data using the **str()** function.
 
 **b.**
 ```{r}
