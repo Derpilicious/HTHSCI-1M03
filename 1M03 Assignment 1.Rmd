@@ -59,7 +59,6 @@ Uses the **identical()** function to verify that **v1_** and **v2_** are equal. 
 N <- 50
 x1 <- as.factor(sample(letters[7:12], N, replace = TRUE))
 x2 <- as.factor(sample(7:12, N, replace = TRUE))
-x2
 ```
 
 **a.**
