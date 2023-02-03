@@ -1,6 +1,6 @@
 ---
 title: '1M03 Assignment #1'
-author: "Roy Luo 400474680, Kenny Zhao ADD YOUR FUCKING STUDENT NUMBER OMG YOU DUMBASS YOURE ACTUALLY INFECTED BY CORDYCEPS"
+author: "Roy Luo 400474680, Kenny Zhao 400440731"
 date: "2023-01-30"
 output: pdf_document
 ---
