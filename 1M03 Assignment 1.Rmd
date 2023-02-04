@@ -99,8 +99,17 @@ class(x2)
 ```
 Uses the **class()** function to verify **x2** is indeed numeric. Note that part **e** also verified using the **str()** function that **x2** was numeric, indicated by the **num** preceding the entries.
 
-bruh kenny i still dk why we need to use unique and levels because that shit is only for a factor but x2 is originally a factor so why tf we need to convert a numeric factor into a numeric factor bruh clearly he means to convert a numeric factor into a numeric vector and we just need to use as.character() for that shit so yeah bruh idk i feel like the hint is either misleading or i am severely misunderstadning this question lmfao man whatever we just lose 0.6% not even a big deal they drop the worst one too so we just do better next two
+```{r}
+levels(x2)
+```
+Note that the **levels()** function returns a result of **NULL** as **x2** is no longer a factor and no longer has anymore levels to view.
 
+```{r}
+unique(x2)
+```
+Similarly, note that the **unique()** function demonstrates that all numbers between 7 and 12 are in the numeric version of **x2** (as the original **x2** sampled random numbers from 7 to 12). 
+
+Thus, it can be concluded that the new **x2** is a numeric version of the original data structure.
 \newpage
 
 ## Question 3
@@ -115,7 +124,12 @@ Loads the **outlier_example** dataset from the **dslabs** package using the **da
 ```{r}
 str(outlier_example)
 ```
-Uses the **str()** function to display the **outlier_examples** object to see there is 500 entries.
+Uses the **str()** function to display the **outlier_example** object to see there is 500 entries.
+
+```{r}
+length(outlier_example)
+```
+Alternatively, the **length()** function also demonstrates that there are 500 entries in **outlier_example**.
 
 **c.**
 ```{r}
