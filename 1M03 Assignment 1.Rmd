@@ -124,12 +124,12 @@ Loads the **outlier_example** dataset from the **dslabs** package using the **da
 ```{r}
 str(outlier_example)
 ```
-Uses the **str()** function to display the **outlier_example** object to see there is 500 entries.
+Uses the **str()** function to display the **outlier_example** object to see there are 500 entries.
 
 ```{r}
 length(outlier_example)
 ```
-Alternatively, the **length()** function also demonstrates that there are 500 entries in **outlier_example**.
+Alternatively, the **length()** function also demonstrates that there are 500 entries in the **outlier_example** object.
 
 **c.**
 ```{r}
