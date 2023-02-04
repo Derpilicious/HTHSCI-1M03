@@ -88,16 +88,18 @@ Same as above, but now divides it by the length of **x1** to obtain the percenta
 
 **e.**
 ```{r}
-x2 <- as.numeric(x2)
+x2 <- as.numeric(as.character(x2))
 str(x2)
 ```
-Assigns **x2** to the numeric version of itself using the **as.numeric()** function. Displays the result using the **str()** function.
+Assigns **x2** to the numeric version of itself using the **as.numeric()** function. To prevent the vector from just being the internal level representations of the factor and not the original values, we use the **as.character()** function to first convert all the entries into character data types. The result is displayed using the **str()** function.
 
 **f.**
 ```{r}
 class(x2)
 ```
 Uses the **class()** function to verify **x2** is indeed numeric. Note that part **e** also verified using the **str()** function that **x2** was numeric, indicated by the **num** preceding the entries.
+
+bruh kenny i still dk why we need to use unique and levels because that shit is only for a factor but x2 is originally a factor so why tf we need to convert a numeric factor into a numeric factor bruh clearly he means to convert a numeric factor into a numeric vector and we just need to use as.character() for that shit so yeah bruh idk i feel like the hint is either misleading or i am severely misunderstadning this question lmfao man whatever we just lose 0.6% not even a big deal they drop the worst one too so we just do better next two
 
 \newpage
 
