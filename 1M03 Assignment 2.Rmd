@@ -1,0 +1,138 @@
+---
+title: "1M03 Assignment 2"
+author: "Roy Luo 400474680"
+date: "2023-02-11"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval=TRUE, echo = TRUE)
+set.seed(34)
+library("tidyverse")
+```
+
+# Question 1
+
+**a.**
+```{r}
+idr<-function(inputVector){
+  sd(inputVector, na.rm=TRUE)/2.56
+}
+```
+**b.**
+```{r}
+tidyIdrSd <- . %>%{
+  c(idr(.),sd(.,na.rm=TRUE))%>%
+  setNames(c("Interdecile Range","Standard Deviation"))%>%
+  round(2)
+}
+```
+**c.**
+```{r}
+data(gapminder, package="dslabs")
+gapminder%>%
+  .$infant_mortality%>%
+  tidyIdrSd()
+```
+The interdecile range and standard deviation for the **infant_mortality** column.
+```{r}
+gapminder%>%
+  .$fertility%>%
+  tidyIdrSd()
+```
+The interdecile range and standard deviation for the **fertility** column.
+
+**d.**
+
+As there is a clear, noticeable difference between the interdecile range and standard deviation for both the **infant_mortality** and the **fertility** column, this indicates both of these columns have outliers. We know this because if the data is normally distributed, the interdecile range and standard deviation would have been very similar. However, since they are not similar at all, this indicates that there are outliers in both of these columns. \newpage
+
+# Question 2
+
+## Iteration 1
+
+### Phase 1
+1. Import and read the CSV file.
+2. Rename columns to the same format (all upper case).
+3. Pivot to long format.
+4. Separate columns.
+5. Identify unique identifier(s) to put as the first column(s).
+
+### Phase 2
+**1. Import and read the CSV file.**
+```{r}
+library("readr")
+tib <- read_csv("as2.csv", col_types = "ccccccc")
+```
+**2. Rename columns to the same format (all upper case).**
+```{r}
+names(tib) <- toupper(names(tib))
+```
+We can double check to make sure.
+```{r}
+tib %>% names()
+```
+The columns have indeed been renamed to uppercase.
+
+**3. Pivot to long format.**
+```{r}
+tib <- tib %>% pivot_longer(!c(CHR4,CHR1),names_to="Month/Year", values_to = "Month and Year Numbers")
+```
+Again, let's double check to make sure it's in long format.
+```{r}
+tib %>% glimpse()
+```
+We can see the data is now in long format. Also, now since each row is an individual observation of data, this will help when we try to turn this data in *tidy* format.
+
+**4. Separate columns**
+```{r}
+tib <- tib %>% separate("Month/Year", c("Month", "Year"), "/")
+tib <- tib %>% separate("Month and Year Numbers", c('Month Number', 'Year Number'), ".-.")
+``` 
+Let's verify again that the columns have been successfully separated.
+```{r}
+tib %>% names()
+```
+We can see that now each column represents only one variable now. Again, this is another step forward to formatting this data in *tidy* format.
+
+**5. Identify unique identifier(s) to put as the first column(s).**
+
+Upon visual inspection, we can see that good candidates for the unique identifiers are the CHR1 and Month columns. We can verify that they are unique.
+```{r}
+tib %>% count(Month, CHR1) %>% filter(n>1) %>% dim_desc()
+```
+Since it returns 0 rows, this means they are good unique identifiers for us to use. \newpage
+
+## Iteration 2
+
+### Phase 1
+1. Sort the data by the unique identifiers.
+2. Check that the data is in *tidy* format.
+3. Check and drop NA values 
+4. Check columns for outliers 
+5. Turn character columns into factors
+
+### Phase 2
+
+**1. Sort the data by the unique identifiers.**
+
+Let's reorganize the order of the columns so that the unique identifiers are the first ones and the data is being sorted accordingly.
+```{r}
+tib <- tib[,c("CHR1", "Month", "Year", "Month Number", "Year Number", "CHR4")]
+tib <- tib %>% arrange(CHR1)
+```
+Let's double check to make sure we did it correctly and the columns are sorted by the CHR1 unique identifier column.
+```{r}
+tib %>% slice(1:5)
+```
+We can see the unique identifiers are now indeed the first two columns and the data is sorted by the CHR1 unique identifier column.
+
+**2. Check that the data is in *tidy* format**
+```{r}
+tib %>% glimpse()
+```
+Since each row contains an individual observation identified by an unique identifier and each column represents one variable, we can conclude the data is in *tidy* format.
+
+**3. Check and drop NA values.**
+```{r}
+
+```
