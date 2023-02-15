@@ -8,7 +8,9 @@ output: pdf_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(eval=TRUE, echo = TRUE)
 set.seed(34)
-library("tidyverse")
+library(tidyverse)
+library(magrittr)
+library(stringr)
 ```
 
 # Question 1
@@ -16,7 +18,8 @@ library("tidyverse")
 **a.**
 ```{r}
 idr<-function(inputVector){
-  sd(inputVector, na.rm=TRUE)/2.56
+  sd(inputVector, na.rm=TRUE)%>% 
+    divide_by(2.56)
 }
 ```
 **b.**
@@ -44,23 +47,30 @@ The interdecile range and standard deviation for the **fertility** column.
 
 **d.**
 
-As there is a clear, noticeable difference between the interdecile range and standard deviation for both the **infant_mortality** and the **fertility** column, this indicates both of these columns have outliers. We know this because if the data is normally distributed, the interdecile range and standard deviation would have been very similar. However, since they are not similar at all, this indicates that there are outliers in both of these columns. \newpage
+As there is a clear, noticeable difference between the interdecile range and standard deviation for both the **infant_mortality** and the **fertility** column, this indicates both of these columns either have outliers or are skewed. We know this because if the data is normally distributed, the interdecile range and standard deviation would have been very similar. However, since they are not similar at all, this indicates that there are outliers in both of these columns. \newpage
 
 # Question 2
 
 ## Iteration 1
 
 ### Phase 1
-1. Import and read the CSV file.
+1. Read the CSV file.
+    + Load the readr library to be able to do so
 2. Rename columns to the same format (all upper case).
 3. Pivot to long format.
 4. Separate columns.
+      + Give them more appropriate names and data types.
 5. Identify unique identifier(s) to put as the first column(s).
 
 ### Phase 2
-**1. Import and read the CSV file.**
+**1. Read the CSV file.**
+
+First let's load the readr package.
 ```{r}
-library("readr")
+library(readr)
+```
+Now let's read the CSV file and assign it to a variable so we can easily access and manipulate the data.
+```{r}
 tib <- read_csv("as2.csv", col_types = "ccccccc")
 ```
 **2. Rename columns to the same format (all upper case).**
@@ -75,7 +85,7 @@ The columns have indeed been renamed to uppercase.
 
 **3. Pivot to long format.**
 ```{r}
-tib <- tib %>% pivot_longer(!c(CHR4,CHR1),names_to="Month/Year", values_to = "Month and Year Numbers")
+tib %<>% pivot_longer(!c(CHR4,CHR1),names_to="MONTH/YEAR", values_to = "MONTH_AND_YEAR_NUMBERS")
 ```
 Again, let's double check to make sure it's in long format.
 ```{r}
@@ -84,9 +94,11 @@ tib %>% glimpse()
 We can see the data is now in long format. Also, now since each row is an individual observation of data, this will help when we try to turn this data in *tidy* format.
 
 **4. Separate columns**
+
+Lets give them more fitting names and convert them into the appropriate data type with the argument **convert = TRUE**.
 ```{r}
-tib <- tib %>% separate("Month/Year", c("Month", "Year"), "/")
-tib <- tib %>% separate("Month and Year Numbers", c('Month Number', 'Year Number'), ".-.")
+tib %<>% separate("MONTH/YEAR", c("MONTH", "YEAR"), "/", convert = TRUE)
+tib %<>% separate("MONTH_AND_YEAR_NUMBERS", c("MONTH_NUMBER", "YEAR_NUMBER"), ".-.", convert = TRUE)
 ``` 
 Let's verify again that the columns have been successfully separated.
 ```{r}
@@ -98,7 +110,7 @@ We can see that now each column represents only one variable now. Again, this is
 
 Upon visual inspection, we can see that good candidates for the unique identifiers are the CHR1 and Month columns. We can verify that they are unique.
 ```{r}
-tib %>% count(Month, CHR1) %>% filter(n>1) %>% dim_desc()
+tib %>% count(MONTH, CHR1) %>% filter(n>1) %>% dim_desc()
 ```
 Since it returns 0 rows, this means they are good unique identifiers for us to use. \newpage
 
@@ -106,33 +118,121 @@ Since it returns 0 rows, this means they are good unique identifiers for us to u
 
 ### Phase 1
 1. Sort the data by the unique identifiers.
+    + Move the unique identifier columns so they are the first columns.
 2. Check that the data is in *tidy* format.
-3. Check and drop NA values 
-4. Check columns for outliers 
-5. Turn character columns into factors
+3. Check and drop NA values. 
+    + Check the character columns as well for completeness.
+4. Check the values in numeric columns.
+    + Drop outliers if necessary.
+    + Only MONTH_NUMBER and YEAR_NUMBER.
+5. Check the values in character columns.
+    + Only CHR4 and MONTH.
+6. Convert character vectors into a factor.
 
 ### Phase 2
 
 **1. Sort the data by the unique identifiers.**
 
-Let's reorganize the order of the columns so that the unique identifiers are the first ones and the data is being sorted accordingly.
+Let's reorganize the order of the columns so that the unique identifiers are the first columns and the data is being sorted accordingly.
 ```{r}
-tib <- tib[,c("CHR1", "Month", "Year", "Month Number", "Year Number", "CHR4")]
-tib <- tib %>% arrange(CHR1)
-```
-Let's double check to make sure we did it correctly and the columns are sorted by the CHR1 unique identifier column.
-```{r}
-tib %>% slice(1:5)
+tib %>% select(CHR1, MONTH, everything()) %>% arrange(CHR1, MONTH)
 ```
 We can see the unique identifiers are now indeed the first two columns and the data is sorted by the CHR1 unique identifier column.
 
-**2. Check that the data is in *tidy* format**
+**2. Check that the data is in *tidy* format.**
 ```{r}
 tib %>% glimpse()
 ```
 Since each row contains an individual observation identified by an unique identifier and each column represents one variable, we can conclude the data is in *tidy* format.
 
 **3. Check and drop NA values.**
-```{r}
 
+Now let's check which columns have NA values.
+```{r}
+tib %>% summary()
 ```
+We can see that the MONTH_NUMBER column has NA values. For completeness, let's check that none of the character columns contain any NA values either.
+```{r}
+tib %>% pull(CHR1) %>% is.na() %>% any()
+tib %>% pull(CHR4) %>% is.na() %>% any()
+tib %>% pull(MONTH) %>% is.na() %>% any()
+```
+We can now verify that only the MONTH_NUMBER column has NA values. Let's drop those rows that contain NA values from the tibble.
+```{r}
+tib %<>% drop_na()
+```
+Let's check the MONTH_NUMBER column again to make sure all those rows with NA values are gone.
+```{r}
+tib %>% pull(MONTH_NUMBER) %>% is.na() %>% any()
+```
+We can see that there are no longer anymore NA values.
+
+**4. Check the values in numeric columns.**
+
+Let's first analyse the numeric columns (except YEAR) for outliers.
+```{r}
+tib %>% .$YEAR_NUMBER %>% summary()
+```
+We can see that the YEAR_NUMBER seems to have a similar mean and median. Additionally, it's maximum value is not much large than its Q75 value and it's minimum value is not that much smaller than it's Q25 value. It is possible there might be a slight skew in this data, but overall we can conclude that the YEAR_NUMBER column seems to be fine.
+```{r}
+tib %>% .$MONTH_NUMBER %>% summary()
+```
+Unfortunately, the MONTH_NUMBER column does not seem to be fine. Its mean and median are quite different, as the difference between the maximum value and Q75 as well as the difference between the minimum value and Q25 seem to be alarming. Let's double check using the standard deviation and interquartile range.
+```{r}
+tib %>% .$MONTH_NUMBER %>% sd()
+tib %>% .$MONTH_NUMBER %>% IQR() %>% divide_by(1.349)
+```
+If the data was a normal distribution, then the standard deviation would be similar to the interquartile range divided by 1.349. However, we can see there is a clear difference between these two values in our data, further reinforcing the fact that it is not a normal distribution and there are outliers. Hence, we should probably assign these outliers a value of NA and drop them from the tibble.
+```{r}
+tib %<>% mutate(across(where(is.numeric), ~ na_if(.x, -8888)))
+tib %<>% mutate(across(where(is.numeric), ~ na_if(.x, 1000)))
+```
+Let's check one more time if there are any more outliers.
+```{r}
+tib %>% .$MONTH_NUMBER %>% summary()
+```
+It seems there are no more outliers on the positive end but there is still one on the negative side.
+```{r}
+tib %<>% mutate(across(where(is.numeric), ~ na_if(.x, -7777)))
+```
+Let's check if there are any more outliers.
+```{r}
+tib %>% .$MONTH_NUMBER %>% summary()
+```
+It seems like that was the last outlier, so we have assigned all of them to a value of NA. Notice how now the mean and median are much more similar in value as opposed to when there still was outliers. Now let's drop them from the tibble.
+```{r}
+tib %<>% drop_na()
+```
+**5. Check the values in character columns.**
+
+Let's first see how many unique inputs we have in our character columns.
+```{r}
+tib %$% unique(MONTH)
+```
+It seems like MONTH does not need to be fixed. This makes sense as we were the ones to name it manually.
+```{r}
+tib %$% table(CHR4)
+```
+Unfortunately, it seems like CHR4 does need some fixing as this is raw data from the CSV file itself. If we want to convert this factor into a column we will have to clean it up so the entries are more organized. Let's first make everything lowercase.
+```{r}
+tib$CHR4 %<>% tolower()
+```
+Let's change all the strings that are not 3 or 4 characters to be "med".
+```{r}
+tib$CHR4[str_length(tib$CHR4) != 3 & str_length(tib$CHR4) != 4] <- "med"
+```
+Now if we check again, all the characters entries should be one of "high", "low" or "med", which sets up perfectly to convert it into a factor in the next step.
+```{r}
+tib %$% table(CHR4)
+```
+**6. Convert character vectors into a factor.**
+```{r}
+tib$MONTH %<>% as.factor()
+tib$CHR4 %<>% as.factor()
+tib$CHR1 %<>% as.factor()
+```
+Now let's double check that they are now indeed factors.
+```{r}
+tib %>% select(where(is.factor))
+```
+Thus we can see we have successfully converted our formerly character columns into factor columns.
