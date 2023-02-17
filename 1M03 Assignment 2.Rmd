@@ -60,7 +60,10 @@ As there is a clear, noticeable difference between the interdecile range and sta
 3. Pivot to long format.
 4. Separate columns.
       + Give them more appropriate names and data types.
-5. Identify unique identifier(s) to put as the first column(s).
+5. Identify unique identifier(s).
+6. Check that the data is in **tidy** format.
+7. Sort the data by the unique identifiers.
+    + Move the unique identifier columns so they are the first columns.
 
 ### Phase 2
 **1. Read the CSV file.**
@@ -106,46 +109,43 @@ tib %>% names()
 ```
 We can see that now each column represents only one variable now. Again, this is another step forward to formatting this data in *tidy* format.
 
-**5. Identify unique identifier(s) to put as the first column(s).**
+**5. Identify unique identifier(s).**
 
 Upon visual inspection, we can see that good candidates for the unique identifiers are the CHR1 and Month columns. We can verify that they are unique.
 ```{r}
 tib %>% count(MONTH, CHR1) %>% filter(n>1) %>% dim_desc()
 ```
-Since it returns 0 rows, this means they are good unique identifiers for us to use. \newpage
+Since it returns 0 rows, this means they are good unique identifiers for us to use.
 
-## Iteration 2
-
-### Phase 1
-1. Sort the data by the unique identifiers.
-    + Move the unique identifier columns so they are the first columns.
-2. Check that the data is in *tidy* format.
-3. Check and drop NA values. 
-    + Check the character columns as well for completeness.
-4. Check the values in numeric columns.
-    + Drop outliers if necessary.
-    + Only MONTH_NUMBER and YEAR_NUMBER.
-5. Check the values in character columns.
-    + Only CHR4 and MONTH.
-6. Convert character vectors into a factor.
-
-### Phase 2
-
-**1. Sort the data by the unique identifiers.**
-
-Let's reorganize the order of the columns so that the unique identifiers are the first columns and the data is being sorted accordingly.
-```{r}
-tib %>% select(CHR1, MONTH, everything()) %>% arrange(CHR1, MONTH)
-```
-We can see the unique identifiers are now indeed the first two columns and the data is sorted by the CHR1 unique identifier column.
-
-**2. Check that the data is in *tidy* format.**
+**6. Check that the data is in *tidy* format.**
 ```{r}
 tib %>% glimpse()
 ```
 Since each row contains an individual observation identified by an unique identifier and each column represents one variable, we can conclude the data is in *tidy* format.
 
-**3. Check and drop NA values.**
+**7. Sort the data by the unique identifiers.**
+Let's reorganize the order of the columns so that the unique identifiers are the first columns and the data is being sorted accordingly.
+```{r}
+tib %>% select(CHR1, MONTH, everything()) %>% arrange(CHR1, MONTH)
+```
+We can see the unique identifiers are now indeed the first two columns and the data is sorted by the CHR1 unique identifier column.\newpage
+
+## Iteration 2
+
+### Phase 1
+
+1. Check and drop NA values. 
+    + Check the character columns as well for completeness.
+2. Check the values in numeric columns.
+    + Drop outliers if necessary.
+    + Only MONTH_NUMBER and YEAR_NUMBER.
+3. Check the values in character columns.
+    + Only CHR4 and MONTH.
+4. Convert character vectors into a factor.
+
+### Phase 2
+
+**1. Check and drop NA values.**
 
 Now let's check which columns have NA values.
 ```{r}
@@ -167,7 +167,7 @@ tib %>% pull(MONTH_NUMBER) %>% is.na() %>% any()
 ```
 We can see that there are no longer anymore NA values.
 
-**4. Check the values in numeric columns.**
+**2. Check the values in numeric columns.**
 
 Let's first analyse the numeric columns (except YEAR) for outliers.
 ```{r}
@@ -203,7 +203,7 @@ It seems like that was the last outlier, so we have assigned all of them to a va
 ```{r}
 tib %<>% drop_na()
 ```
-**5. Check the values in character columns.**
+**3. Check the values in character columns.**
 
 Let's first see how many unique inputs we have in our character columns.
 ```{r}
@@ -225,7 +225,7 @@ Now if we check again, all the characters entries should be one of "high", "low"
 ```{r}
 tib %$% table(CHR4)
 ```
-**6. Convert character vectors into a factor.**
+**4. Convert character vectors into a factor.**
 ```{r}
 tib$MONTH %<>% as.factor()
 tib$CHR4 %<>% as.factor()
