@@ -1,0 +1,190 @@
+---
+title: "Midterm"
+author: "Roy Luo 400474680"
+date: "2023-03-10"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = TRUE, echo = TRUE)
+set.seed(34)
+library(tidyverse)
+library(magrittr)
+library(stringr)
+library(knitr)
+library(styler)
+```
+# Question 1
+
+## Iteration 1
+
+### Phase 1
+* Read the CSV file.
+    + Load the readr library to be able to do so
+* Rename columns to the same format (all upper case).
+* Pivot to long format.
+* Identify unique identifier(s).
+* Sort the data by the unique identifiers.
+    + Move the unique identifier columns so they are the first columns.
+* Check that the data is in **tidy** format.
+
+    
+### Phase 2
+**Read the CSV file.**
+
+First load the readr package.
+```{r}
+library(readr)
+```
+Read the CSV file and assign it to a variable so we can easily access to wrangle the data.
+```{r}
+tib <- read_csv(".csv", col_types = "") #put the column types here kenny in order as a string "c" for character "n" for numeric "?" if you dont know (its ok R will just guess)
+```
+**Rename columns to the same format (all upper case).**
+```{r}
+tib %<>% rename_with(toupper)
+```
+Double check to make sure.
+```{r}
+tib %>% names()
+```
+The columns have indeed been renamed to uppercase.
+
+**Pivot to long format.**
+```{r}
+tib %<>% pivot_longer(!c("columns you dont want to be pivoted"), names_to = "character columns", values_to = "numeric columns")
+```
+Again, double check to make sure it's in long format.
+```{r}
+tib %>%
+  slice(1:5) %>%
+  kable()
+```
+The data is now in long format. Also, now since each row is an individual observation of data, this will help turn this data in *tidy* format.
+
+**Identify unique identifier(s).**
+
+Upon visual inspection, good candidates for the unique identifiers are the *SOMETHING* and *SOMETHING ELSE* columns. Verify that it/they are unique.
+```{r}
+tib %>%
+  count("whatever your uids are just pick 1 or 2 that seem good cuz they must be different for every row") %>%
+  filter(n > 1) %>%
+  dim_desc() #make sure this returns 0 to prove its unique
+```
+Since it returns 0 rows, this means they are good unique identifiers to use as they are all unique and do not appear more than once.
+
+**Sort the data by the unique identifiers.**
+
+Reorganize the order of the columns so that the unique identifiers are the first columns and the data is being sorted accordingly.
+```{r}
+tib %<>%
+  select("put your uids here", everything()) %>%
+  arrange("put your uids here")
+```
+The unique identifiers are now indeed the first two columns and the data is sorted by the *SOMETHING* and *SOMETHING ELSE* unique identifier columns.
+
+**Check that the data is in *tidy* format.**
+```{r}
+tib %>%
+  slice(1:5) %>%
+  kable()
+```
+Since each row contains an individual observation identified by an unique identifier and each column represents one variable, can conclude the data is in *tidy* format.\newpage
+
+## Iteration 2
+
+### Phase 1
+* Separate columns.
+    + Give them more appropriate names and data types.
+* Check the values in numeric columns.
+    + Mark outliers as NA if necessary.
+* Check the values in character columns.
+* Convert character vectors into a factor.
+* Check and drop NA values. 
+
+### Phase 2
+**Separate columns.**
+
+Give them more fitting names and convert them into the appropriate data type with the argument **convert = TRUE**.
+```{r}
+tib %<>% separate("original column name", c("new column name 1", "new column name 2"), "delimiter character", convert = TRUE)
+``` 
+Verify again that the columns have been successfully separated.
+```{r}
+tib %>%
+  slice(1:5) %>%
+  kable()
+```
+Each column represents only one variable now. Again, this is another step forward to formatting this data in *tidy* format.
+
+**Check the values in numeric columns.**
+
+First analyse the numeric columns for outliers.
+```{r}
+tib %>%
+  .$column without outliers %>%
+  summary()
+```
+The column without outliers seems to have a similar mean and median. Additionally, its maximum value is not much large than its Q75 value and its minimum value is not that much smaller than its Q25 value. It is possible there might be a slight skew in this data, but overall I can conclude that the YEAR_NUMBER column seems to be fine.
+```{r}
+tib %>%
+  .$column with outliers %>%
+  summary()
+```
+Unfortunately, the column with outliers column does not seem to be fine. Its mean and median are quite different, as the difference between the maximum value and Q75 as well as the difference between the minimum value and Q25 seem to be alarming. Hence, I should probably assign these outliers a value of NA and subsequently drop them from the tibble at a later step.
+```{r}
+tib %<>% mutate(across(where(is.numeric), ~ na_if(.x, outlier value)))
+```
+yo keep doing this until theres no more outliers or weird numbers or whatever just use summary() and then the command above to turn it into NA
+```{r}
+tib %>%
+  .$column with outliers %>%
+  summary()
+```
+It seems like that was the last outlier, so I have assigned all of them to a value of NA. Notice how now the mean and median are much more similar in value as opposed to when there still was outliers.
+
+**Check the values in character columns.**
+
+Let's first see how many unique inputs we have in our character columns.
+```{r}
+tib %>% count(character column) %>% kable()
+```
+It seems like character column does not need to be fixed.
+```{r}
+tib %>% count(other character column) %>% kable()
+```
+Unfortunately, it seems like other character column does need some fixing as this is raw data from the CSV file itself. If we want to convert this column into a factor we will have to clean it up so the entries are more organized. 
+```{r}
+vm <- c("put the different unique entries here in a vector but NOT the NA one")
+tib %<>% mutate(new name = if_else(other character column %in% vm, "whatever you want them all to be", other character column))
+```
+Now if we check again, all the characters entries should be a correct and valid entry, which sets this this column up perfectly to convert it into a factor in the next step.
+```{r}
+tib %$% table(other character column, new name)
+```
+**Convert character vectors into a factor.**
+```{r}
+tib %<>% mutate(char to factor = as.factor(char to factor)) #yo just do this for every charavter column ya wanna turn into a factor jit
+```
+Now let's double check that they are now indeed factors.
+```{r}
+tib %>% glimpse()
+```
+We see now all character columns have been converted into factors.
+
+**Check and drop NA values.**
+
+Let's drop all NA values from the tibble.
+```{r}
+tib %<>% drop_na()
+```
+Now let's check every column to make sure there are no more NA values.
+```{r}
+tib %>% pull(everything()) %>% is.na() %>% any()
+```
+We see there are no more NA values.
+
+**Final tibble.**
+```{r}
+tib %>% glimpse()
+```
