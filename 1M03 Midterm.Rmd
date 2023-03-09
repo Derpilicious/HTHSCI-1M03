@@ -135,7 +135,7 @@ Unfortunately, the column with outliers column does not seem to be fine. Its mea
 ```{r}
 tib %<>% mutate(across(where(is.numeric), ~ na_if(.x, outlier value)))
 ```
-yo keep doing this until theres no more outliers or weird numbers or whatever just use summary() and then the command above to turn it into NA
+yo keep doing this until theres no more outliers or weird numbers or whatever just keep using summary() and then the command above to turn it each value into NA
 ```{r}
 tib %>%
   .$column with outliers %>%
@@ -145,26 +145,25 @@ It seems like that was the last outlier, so I have assigned all of them to a val
 
 **Check the values in character columns.**
 
-Let's first see how many unique inputs we have in our character columns.
-```{r}
-tib %>% count(character column) %>% kable()
-```
-It seems like character column does not need to be fixed.
 ```{r}
 tib %>% count(other character column) %>% kable()
 ```
 Unfortunately, it seems like other character column does need some fixing as this is raw data from the CSV file itself. If we want to convert this column into a factor we will have to clean it up so the entries are more organized. 
 ```{r}
 vm <- c("put the different unique entries here in a vector but NOT the NA one")
-tib %<>% mutate(new name = if_else(other character column %in% vm, "whatever you want them all to be", other character column))
+tib %<>% mutate(new character column = if_else(other character column %in% vm, "whatever you want them all to be", other character column))
 ```
 Now if we check again, all the characters entries should be a correct and valid entry, which sets this this column up perfectly to convert it into a factor in the next step.
 ```{r}
-tib %$% table(other character column, new name)
+tib %$% table(other character column, new character column)
+```
+Let's drop old character column as it has been replaced by the new character column.
+```{r}
+tib %<>% select(!old character column)
 ```
 **Convert character vectors into a factor.**
 ```{r}
-tib %<>% mutate(char to factor = as.factor(char to factor)) #yo just do this for every charavter column ya wanna turn into a factor jit
+tib %<>% mutate(char to factor = as.factor(char to factor)) #yo just do this for every character column ya wanna turn into a factor jit
 ```
 Now let's double check that they are now indeed factors.
 ```{r}
@@ -173,14 +172,18 @@ tib %>% glimpse()
 We see now all character columns have been converted into factors.
 
 **Check and drop NA values.**
-
-Let's drop all NA values from the tibble.
+Let's check for NA values.
+```{r}
+tob %>% summary()
+```
+It seems like column name has NA values. Let's drop all NA values from the tibble.
 ```{r}
 tib %<>% drop_na()
 ```
-Now let's check every column to make sure there are no more NA values.
+Now let's check to make sure there are no more NA values.
 ```{r}
-tib %>% pull(everything()) %>% is.na() %>% any()
+tib %>% pull(column name) %>% is.na() %>% any() #either use this to check just one column
+tib %>% summary() #or this for whole table
 ```
 We see there are no more NA values.
 
